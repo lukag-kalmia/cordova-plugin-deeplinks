@@ -2,6 +2,9 @@
 
 **NOTE:** This is a fork from the original cordova plugin "cordova-deeplinks" that in turn is a fork from "cordova-universal-links-plugin"
 
+**NOTE:** This is a fork of "e-imaxina/cordova-plugin-deeplinks" and got an update for the security breach of a dependency from "xml2js (0.4.23)" 
+and got an update to inject "aps-enviroment" to entitlements file.
+
 This Cordova plugin adds support for opening an application from the browser when user clicks on the link. Better known as:
 - [Universal Links on iOS](https://developer.apple.com/library/ios/documentation/General/Conceptual/AppSearch/UniversalLinks.html)
 - [Deep Linking on Android](https://developer.android.com/training/app-indexing/deep-linking.html)
@@ -48,16 +51,10 @@ It is important not only to redirect users to your app from the web, but also pr
 - [Additional documentation links](#additional-documentation-links)
 
 ### Installation
-This requires cordova 5.0+ (current stable 1.2.1)
+Install via repo url directly (**unstable**)
 
 ```sh
-cordova plugin add cordova-plugin-deeplinks
-```
-
-It is also possible to install via repo url directly (**unstable**)
-
-```sh
-cordova plugin add https://github.com/e-imaxina/cordova-plugin-deeplinks.git
+cordova plugin add https://github.com/lukag-kalmia/cordova-plugin-deeplinks.git
 ```
 
 ### Cordova config preferences
@@ -233,6 +230,19 @@ will result into
 ```
 
 This is iOS-only preference, Android doesn't need it.
+
+#### iOS App Entitlements file
+
+Add following line to iOS config in Release config.xml
+```xml
+<resource-file src="Zymzo-Release.entitlements" />
+```
+
+and add following line to iOS config to Debug/development config.xml
+```xml
+<resource-file src="Zymzo-Release.entitlements" />
+```
+
 
 #### Prevent Android from creating multiple app instances
 

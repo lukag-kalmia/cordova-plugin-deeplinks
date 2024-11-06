@@ -252,8 +252,18 @@ function isLaunchActivity(activity) {
       return false;
     }
 
-    var isMainAction = ('android.intent.action.MAIN' === action[0]['$']['android:name']);
-    var isLauncherCategory = ('android.intent.category.LAUNCHER' === category[0]['$']['android:name']);
+    var isMainAction = false;
+    var isLauncherCategory = false;
+    action.forEach(function (item) {
+      if (!isMainAction) {
+        isMainAction = ('android.intent.action.MAIN' === item['$']['android:name']);
+      }
+    });
+    category.forEach(function (item) {
+      if (!isLauncherCategory) {
+        isLauncherCategory = ('android.intent.category.LAUNCHER' === item['$']['android:name']);
+      }
+    });
 
     return isMainAction && isLauncherCategory;
   });

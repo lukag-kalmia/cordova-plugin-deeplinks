@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.1.2](https://github.com/lukag-kalmia/cordova-plugin-deeplinks/compare/v1.1.1...v1.1.2) (2024-11-06)
+
+#### Fixes
+ * Fix security breach of a dependency from "xml2js (0.4.23)
+
+#### Features
+ * Generate Release and Debug entitlements for iOS
+
 ### [1.1.1](https://github.com/e-imaxina/cordova-plugin-deeplinks/compare/v1.1.0...v1.1.1) (2019-08-13)
 
 
