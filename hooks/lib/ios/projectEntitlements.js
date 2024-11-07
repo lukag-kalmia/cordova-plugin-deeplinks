@@ -11,14 +11,11 @@ var fs = require('fs');
 var plist = require('plist');
 var mkpath = require('mkpath');
 var ConfigXmlHelper = require('../configXmlHelper.js');
-const {build} = require("plist/lib/build");
 var ASSOCIATED_DOMAINS = 'com.apple.developer.associated-domains';
-var APS_ENVIRONMENT = 'aps-environment';
 var context;
 var projectRoot;
 var projectName;
 var entitlementsFilePath;
-var buildTypes = ["Debug", "Release"];
 
 module.exports = {
   generateAssociatedDomainsEntitlements: generateEntitlements
@@ -35,12 +32,10 @@ module.exports = {
 function generateEntitlements(cordovaContext, pluginPreferences) {
   context = cordovaContext;
 
-  buildTypes.forEach(buildType => {
-    var currentEntitlements = getEntitlementsFileContent(buildType);
-    var newEntitlements = injectPreferences(currentEntitlements, pluginPreferences, buildType);
+  var currentEntitlements = getEntitlementsFileContent();
+  var newEntitlements = injectPreferences(currentEntitlements, pluginPreferences);
 
-    saveContentToEntitlementsFile(newEntitlements, buildType);
-  })
+  saveContentToEntitlementsFile(newEntitlements);
 }
 
 // endregion
@@ -52,9 +47,9 @@ function generateEntitlements(cordovaContext, pluginPreferences) {
  *
  * @param {Object} content - data to save; JSON object that will be transformed into xml
  */
-function saveContentToEntitlementsFile(content, buildType) {
+function saveContentToEntitlementsFile(content) {
   var plistContent = plist.build(content);
-  var filePath = pathToEntitlementsFile(buildType);
+  var filePath = pathToEntitlementsFile();
 
   // ensure that file exists
   mkpath.sync(path.dirname(filePath));
@@ -68,8 +63,8 @@ function saveContentToEntitlementsFile(content, buildType) {
  *
  * @return {String} entitlements file content
  */
-function getEntitlementsFileContent(buildType) {
-  var pathToFile = pathToEntitlementsFile(buildType);
+function getEntitlementsFileContent() {
+  var pathToFile = pathToEntitlementsFile();
   var content;
 
   try {
@@ -95,15 +90,13 @@ function defaultEntitlementsFile() {
  *
  * @param {Object} currentEntitlements - entitlements where to inject preferences
  * @param {Object} pluginPreferences - list of hosts from config.xml
- * @param buildType - used for defining aps-environment
  * @return {Object} new entitlements content
  */
-function injectPreferences(currentEntitlements, pluginPreferences, buildType) {
+function injectPreferences(currentEntitlements, pluginPreferences) {
   var newEntitlements = currentEntitlements;
+  var content = generateAssociatedDomainsContent(pluginPreferences);
 
-  newEntitlements[ASSOCIATED_DOMAINS] = generateAssociatedDomainsContent(pluginPreferences);
-
-  newEntitlements[APS_ENVIRONMENT] = buildType === 'Release' ? 'production' : 'development';
+  newEntitlements[ASSOCIATED_DOMAINS] = content;
 
   return newEntitlements;
 }
@@ -111,7 +104,7 @@ function injectPreferences(currentEntitlements, pluginPreferences, buildType) {
 /**
  * Generate content for associated-domains dictionary in the entitlements file.
  *
- * @param {Object} pluginPreferences - list of hosts from config.xml
+ * @param {Object} pluginPreferences - list of hosts from conig.xml
  * @return {Object} associated-domains dictionary content
  */
 function generateAssociatedDomainsContent(pluginPreferences) {
@@ -147,9 +140,9 @@ function domainsListEntryForHost(host) {
  *
  * @return {String} absolute path to entitlements file
  */
-function pathToEntitlementsFile(buildType) {
+function pathToEntitlementsFile() {
   if (entitlementsFilePath === undefined) {
-    entitlementsFilePath = path.join(getProjectRoot(), 'platforms', 'ios', getProjectName(), 'Resources', `${getProjectName()}-${buildType}.entitlements'`);
+    entitlementsFilePath = path.join(getProjectRoot(), 'platforms', 'ios', getProjectName(), 'Resources', getProjectName() + '.entitlements');
   }
 
   return entitlementsFilePath;
